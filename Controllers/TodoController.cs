@@ -12,7 +12,7 @@ namespace MeuTodo.Controllers
     public class TodoController : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> Get([FromServices] AppDbContext context)
+        public async Task<IActionResult> GetAsync([FromServices] AppDbContext context)
         {
             var todos = await context
                 .Todos
@@ -20,6 +20,21 @@ namespace MeuTodo.Controllers
                 .ToListAsync();
 
             return Ok(todos);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(
+            [FromServices] AppDbContext context, 
+            [FromRoute] int id)
+        {
+            var todo = await context
+                .Todos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return todo == null ? 
+                NotFound() 
+                : Ok(todo);
         }
     }
 }
