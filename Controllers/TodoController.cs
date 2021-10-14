@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using MeuTodo.Models;
+using MeuTodo.Data;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeuTodo.Controllers
 {
@@ -9,9 +12,14 @@ namespace MeuTodo.Controllers
     public class TodoController : ControllerBase
     {
         [HttpGet]
-        public List<Todo> Get()
+        public async Task<IActionResult> Get([FromServices] AppDbContext context)
         {
-            return new List<Todo>();
+            var todos = await context
+                .Todos
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(todos);
         }
     }
 }
